@@ -4,7 +4,10 @@
   "description": "",
   "main": "",
   "scripts": {
-    "app1": "webpack --env.appName=app1 --env.production=true",
+    "app1": "webpack-dev-server --env.appName=app1",
+    "app2": "webpack-dev-server --env.appName=app2",
+    "build_app1":"webpack --env.appName=app1",
+    "build_app2":"webpack --env.appName=app2",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

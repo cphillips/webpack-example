@@ -7,8 +7,10 @@ module.exports = function (env) {
   const buildDir = appDir + '/build'
   let plugins = null
   let cssLoader = null
+  let devtools = null
 
   if (env.production) {
+    devtools = 'source-map'
     plugins = [
       new HtmlWebpackPlugin({ title: env.AppName }),
       new ExtractTextPlugin("style.css")
@@ -22,6 +24,7 @@ module.exports = function (env) {
       })
     }
   } else {
+    devtools=false
     plugins = [
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NamedModulesPlugin(),
@@ -36,7 +39,7 @@ module.exports = function (env) {
   }
 
   return {
-    devtool: 'source-map',
+    devtool: devtools,
     entry: {
       app: appDir + '/app.js',
     },
