@@ -1,36 +1,22 @@
 npm install
-npm start
+
+webpack-dev-server --env.appName=app1
+webpack --env.appName=app1
 
 
-localhost:8080/app1/app1.html
-
-localhost:8080/app2/app2.html
 
 
- module: {
-      rules: [
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use: [
-            'babel-loader',
-          ],
-        },
-        {
-          test: /\.css$/,
-          exclude: /node_modules/,
-          use: [
-            'style-loader',
-            'css-loader'
-          ]
-        },
-        {
-          test: /\.(jpg|jpeg|png|gif|ico|svg)$/,
-          loader: 'url-loader',
-          query: {
-            limit: 10000, // use data url for assets <= 10KB
-            name: 'assets/[name].[hash].[ext]'
-          },
-        },
-      ]
-    },
+
+{
+				test: /\.(jpe?g|png|gif|svg)$/i,
+				use: [
+					'url-loader?limit=10000',
+					'img-loader'
+				]
+			}
+
+
+
+            resolve: {
+		modules: [path.resolve(__dirname, 'src'), 'node_modules'],
+	},

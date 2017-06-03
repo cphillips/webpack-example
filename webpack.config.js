@@ -1,10 +1,42 @@
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ExtractTextPlugin = require("extract-text-webpack-plugin")
 
 module.exports = function (env) {
   const appDir = __dirname + '/' + env.appName
   const buildDir = appDir + '/build'
+  let plugins = null
+  let cssLoader = null
+
+  if (env.production) {
+    plugins = [
+      new HtmlWebpackPlugin({ title: env.AppName }),
+      new ExtractTextPlugin("style.css")
+    ]
+    cssLoader = {
+      test: /\.css$/,
+      use: ExtractTextPlugin.extract({
+        fallback: "style-loader",
+        use: [{ loader: 'css-loader', options: { importLoaders: 1 } },
+              'postcss-loader']
+      })
+    }
+  } else {
+    plugins = [
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NamedModulesPlugin(),
+      new HtmlWebpackPlugin({ title: env.AppName })
+    ]
+    cssLoader = {
+      test: /\.css$/,
+      use: ['style-loader',
+        { loader: 'css-loader', options: { importLoaders: 1 } },
+        'postcss-loader']
+    }
+  }
+
   return {
+    devtool: 'source-map',
     entry: {
       app: appDir + '/app.js',
     },
@@ -12,11 +44,7 @@ module.exports = function (env) {
       path: appDir + '/build',
       filename: '[name].js',
     },
-    plugins: [
-      new webpack.HotModuleReplacementPlugin(),
-      new webpack.NamedModulesPlugin(),
-      new HtmlWebpackPlugin({ title: 'AppName' })
-    ],
+    plugins: plugins,
     module: {
       rules: [
         {
@@ -25,24 +53,11 @@ module.exports = function (env) {
           use: [{
             loader: 'babel-loader',
             options: {
-              presets: [
-                ["env", {
-                  "targets": {
-                    "browsers": ["last 2 versions", "safari >= 7"]
-                  }
-                }]
-              ]
+              presets: [["env", { "targets": { "browsers": ["last 2 versions", "safari >= 7"] } }]]
             },
           }],
         },
-        {
-          test: /\.css$/,
-          exclude: /node_modules/,
-          use: [
-            'style-loader',
-            'css-loader'
-          ]
-        },
+        cssLoader,
         {
           test: /\.(jpg|jpeg|png|gif|ico|svg)$/,
           loader: 'url-loader',
@@ -54,8 +69,6 @@ module.exports = function (env) {
       ],
     },
     devServer: {
-      contentBase: buildDir,
-      compress: true,
       port: 9000,
       hot: true
     }
